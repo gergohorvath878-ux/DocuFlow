@@ -1,0 +1,14 @@
+DocuFlow Desktop – gyors indítás
+
+1. Fejlesztői futtatás:
+   npm install
+   npm start
+
+2. Telepítő készítése:
+   npm run dist:win
+   npm run dist:mac
+   npm run dist:linux
+
+A végfelhasználói telepítőbe az Electron a futtatókörnyezetet is becsomagolja.
+A jelen forrásprojektet tartalmaz, nem kész .exe/.dmg/.AppImage fájlokat.
+Részletek: README.md és docs/ mappa.
