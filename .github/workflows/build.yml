@@ -1,0 +1,57 @@
+name: Build DocuFlow installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            command: npm run dist:win
+            artifact: win
+          - os: macos-13
+            platform: macos-x64
+            command: npx electron-builder --mac dmg --x64
+            artifact: mac-x64
+          - os: macos-latest
+            platform: macos-arm64
+            command: npx electron-builder --mac dmg --arm64
+            artifact: mac-arm64
+          - os: ubuntu-latest
+            platform: linux-x64
+            command: npm run dist:linux
+            artifact: linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build installer
+        run: ${{ matrix.command }}
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DocuFlow-${{ matrix.artifact }}
+          path: release/*
+          if-no-files-found: error
+      - name: Attach installers to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
