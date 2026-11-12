@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 let db;
 let mainWindow;
-const LICENSE_PUBLIC_KEY = ''; // A kiadó által generált nyilvános Ed25519 kulcs PEM formátumban.
+const LICENSE_PUBLIC_KEY = (()=>{try{return fs.readFileSync(path.join(__dirname,'license-public.pem'),'utf8');}catch{return '';}})();
 
 function initDatabase() {
   const dataDir = app.getPath('userData');
@@ -36,13 +36,15 @@ function initDatabase() {
       vat_rate REAL NOT NULL DEFAULT 27,
       FOREIGN KEY(document_id) REFERENCES documents(id) ON DELETE CASCADE
     );
-    CREATE TABLE IF NOT EXISTS company_profile (id INTEGER PRIMARY KEY CHECK(id=1), name TEXT DEFAULT '', contact TEXT DEFAULT '', email TEXT DEFAULT '', phone TEXT DEFAULT '', address TEXT DEFAULT '', tax_number TEXT DEFAULT '', website TEXT DEFAULT '', accent_color TEXT DEFAULT '#4169e1', footer_text TEXT DEFAULT '', logo_path TEXT DEFAULT '');
+    CREATE TABLE IF NOT EXISTS company_profile (id INTEGER PRIMARY KEY CHECK(id=1), name TEXT DEFAULT '', contact TEXT DEFAULT '', email TEXT DEFAULT '', phone TEXT DEFAULT '', address TEXT DEFAULT '', tax_number TEXT DEFAULT '', website TEXT DEFAULT '', accent_color TEXT DEFAULT '#4169e1', footer_text TEXT DEFAULT '', logo_path TEXT DEFAULT '', logo_data TEXT DEFAULT '');
     CREATE TABLE IF NOT EXISTS templates (
       id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,
       type TEXT NOT NULL DEFAULT 'custom', body TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `);
+  const companyCols=db.prepare('PRAGMA table_info(company_profile)').all().map(c=>c.name);
+  if(!companyCols.includes('logo_data')) db.exec("ALTER TABLE company_profile ADD COLUMN logo_data TEXT DEFAULT ''");
   const cols=db.prepare('PRAGMA table_info(documents)').all().map(c=>c.name);
   if(!cols.includes('content')) db.exec("ALTER TABLE documents ADD COLUMN content TEXT NOT NULL DEFAULT ''");
   if(db.prepare('SELECT COUNT(*) n FROM templates').get().n===0){
@@ -69,10 +71,10 @@ function safeText(value, max = 5000) { return String(value ?? '').trim().slice(0
 
 ipcMain.handle('license:status',()=>({professional:currentLicense(),edition:currentLicense()?'professional':'standard'}));
 ipcMain.handle('license:import',async()=>{const r=await dialog.showOpenDialog(mainWindow,{title:'DocuFlow licenc importálása',properties:['openFile'],filters:[{name:'DocuFlow licenc',extensions:['json']}]});if(r.canceled||!r.filePaths[0])return null;let obj;try{obj=JSON.parse(fs.readFileSync(r.filePaths[0],'utf8'));}catch{throw new Error('A licencfájl formátuma hibás.');}if(!verifyLicenseObject(obj))throw new Error('A licenc aláírása érvénytelen, vagy a kiadói kulcs nincs beállítva.');fs.copyFileSync(r.filePaths[0],path.join(app.getPath('userData'),'license.json'));return true;});
-ipcMain.handle('company:get',()=>db.prepare('SELECT * FROM company_profile WHERE id=1').get()||{name:'',contact:'',email:'',phone:'',address:'',tax_number:'',website:'',accent_color:'#4169e1',footer_text:'',logo_path:''});
+ipcMain.handle('company:get',()=>db.prepare('SELECT * FROM company_profile WHERE id=1').get()||{name:'',contact:'',email:'',phone:'',address:'',tax_number:'',website:'',accent_color:'#4169e1',footer_text:'',logo_path:'',logo_data:''});
 ipcMain.handle('company:save',(_,data)=>{const d=data||{};const v=[safeText(d.name,250),safeText(d.contact,250),safeText(d.email,250),safeText(d.phone,80),safeText(d.address,1000),safeText(d.tax_number,80),safeText(d.website,250),/^#[0-9a-fA-F]{6}$/.test(d.accent_color)?d.accent_color:'#4169e1',safeText(d.footer_text,500)];db.prepare("INSERT INTO company_profile(id,name,contact,email,phone,address,tax_number,website,accent_color,footer_text) VALUES(1,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,contact=excluded.contact,email=excluded.email,phone=excluded.phone,address=excluded.address,tax_number=excluded.tax_number,website=excluded.website,accent_color=excluded.accent_color,footer_text=excluded.footer_text").run(...v);return true;});
-ipcMain.handle('company:choose-logo',async()=>{const r=await dialog.showOpenDialog(mainWindow,{title:'Céges logó kiválasztása',properties:['openFile'],filters:[{name:'Képfájlok',extensions:['png','jpg','jpeg']}]});if(r.canceled||!r.filePaths[0])return null;const dest=path.join(app.getPath('userData'),'company-logo'+path.extname(r.filePaths[0]).toLowerCase());fs.copyFileSync(r.filePaths[0],dest);db.prepare("INSERT INTO company_profile(id,logo_path) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET logo_path=excluded.logo_path").run(dest);return dest;});
-ipcMain.handle('company:remove-logo',()=>{const p=db.prepare('SELECT logo_path FROM company_profile WHERE id=1').get()?.logo_path;if(p&&fs.existsSync(p))fs.unlinkSync(p);db.prepare("INSERT INTO company_profile(id,logo_path) VALUES(1,'') ON CONFLICT(id) DO UPDATE SET logo_path=''").run();return true;});
+ipcMain.handle('company:choose-logo',async()=>{const r=await dialog.showOpenDialog(mainWindow,{title:'Céges logó kiválasztása',properties:['openFile'],filters:[{name:'Képfájlok',extensions:['png','jpg','jpeg']}]});if(r.canceled||!r.filePaths[0])return null;const stat=fs.statSync(r.filePaths[0]);if(stat.size>5*1024*1024)throw new Error('A logó legfeljebb 5 MB lehet.');const ext=path.extname(r.filePaths[0]).toLowerCase(),mime=ext==='.png'?'image/png':'image/jpeg',data=fs.readFileSync(r.filePaths[0]).toString('base64');db.prepare("INSERT INTO company_profile(id,logo_path,logo_data) VALUES(1,'',?) ON CONFLICT(id) DO UPDATE SET logo_path='',logo_data=excluded.logo_data").run(mime+';base64,'+data);return 'data:'+mime+';base64,'+data;});
+ipcMain.handle('company:remove-logo',()=>{db.prepare("INSERT INTO company_profile(id,logo_path,logo_data) VALUES(1,'','') ON CONFLICT(id) DO UPDATE SET logo_path='',logo_data=''").run();return true;});
 ipcMain.handle('dashboard:get', () => ({
   customers: db.prepare('SELECT COUNT(*) n FROM customers').get().n,
   documents: db.prepare('SELECT COUNT(*) n FROM documents').get().n,
@@ -130,8 +132,8 @@ ipcMain.handle('documents:pdf',async(_,id)=>{
  const fontCandidates=process.platform==='win32'?['C:/Windows/Fonts/arial.ttf','C:/Windows/Fonts/calibri.ttf']:process.platform==='darwin'?['/System/Library/Fonts/Supplemental/Arial.ttf','/System/Library/Fonts/Supplemental/Helvetica.ttf']:['/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf'];
  const fontPath=[path.join(process.resourcesPath||__dirname,'assets','DejaVuSans.ttf'),...fontCandidates].find(p=>fs.existsSync(p));if(fontPath)doc.font(fontPath);else doc.font('Helvetica');
  const accent=/^#[0-9a-fA-F]{6}$/.test(company.accent_color)?company.accent_color:'#4169e1';
- if(company.logo_path&&fs.existsSync(company.logo_path)){try{doc.image(company.logo_path,48,38,{fit:[90,55]});}catch{}}
- const bx=company.logo_path&&fs.existsSync(company.logo_path)?155:48;doc.fillColor('#17233c').fontSize(16).text(company.name||'DocuFlow',bx,42,{width:350});
+ const logoData=company.logo_data||'';const logoBuffer=logoData.includes(';base64,')?Buffer.from(logoData.split(';base64,')[1],'base64'):null;if(logoBuffer){try{doc.image(logoBuffer,48,38,{fit:[90,55]});}catch{}}
+ const bx=logoBuffer?155:48;doc.fillColor('#17233c').fontSize(16).text(company.name||'DocuFlow',bx,42,{width:350});
  const lines=[company.contact,company.address,company.email,company.phone,company.website,company.tax_number?'Adószám: '+company.tax_number:''].filter(Boolean);doc.fillColor('#667085').fontSize(8);if(lines.length)doc.text(lines.join('  |  '),bx,64,{width:380});
  doc.moveTo(48,112).lineTo(547,112).strokeColor(accent).lineWidth(2).stroke();doc.moveDown(3);doc.fillColor('#17233c').fontSize(21).text(d.title,{width:500});doc.moveDown(.6);doc.fillColor('#667085').fontSize(9);
  doc.text('Dokumentumszám: '+d.number);doc.text('Típus: '+d.type);doc.text('Dátum: '+d.issue_date);if(d.due_date)doc.text('Határidő / érvényesség: '+d.due_date);
