@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>DocuFlow</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">D</div><div><b>DocuFlow</b><small>BUSINESS DESK</small></div></div>
+    <div class="nav-label">MUNKATERÜLET</div>
+    <button class="nav active" data-page="dashboard"><span>◫</span> Áttekintés</button>
+    <button class="nav" data-page="documents"><span>▤</span> Dokumentumok</button>
+    <button class="nav" data-page="customers"><span>♙</span> Ügyfelek</button>
+    <button class="nav" data-page="templates"><span>▧</span> Sablonok</button>
+    <div class="sidebar-bottom"><div class="offline"><i></i> Helyi, offline mód</div><small>DOCUFLOW DESKTOP · 1.0</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><span class="eyebrow">ÜZLETI DOKUMENTUMKEZELÉS</span><h1 id="page-title">Áttekintés</h1></div><div class="top-actions"><button class="btn ghost" id="restore-btn">Visszaállítás</button><button class="btn ghost" id="backup-btn">Mentés</button><button class="btn primary" id="new-doc-btn">＋ Új dokumentum</button></div></header>
+    <section id="page-dashboard" class="page">
+      <div class="welcome"><div><span class="eyebrow light">ÜDVÖZLÜNK A DOCUFLOW-BAN</span><h2>Rendszerezd az üzleti<br>folyamataidat.</h2><p>Dokumentumok, ügyfelek és sablonok egyetlen helyen.</p></div><div class="welcome-icon">D</div></div>
+      <div class="stats"><article class="stat"><span>Ügyfelek</span><strong id="stat-customers">0</strong><small>Nyilvántartott ügyfél</small></article><article class="stat"><span>Dokumentumok</span><strong id="stat-documents">0</strong><small>Összes dokumentum</small></article><article class="stat"><span>Piszkozatok</span><strong id="stat-drafts">0</strong><small>Folyamatban</small></article></div>
+      <div class="section-head"><div><h3>Legutóbbi dokumentumok</h3><p>A legutóbb létrehozott elemek</p></div><button class="text-btn" data-goto="documents">Összes megtekintése →</button></div>
+      <div id="recent-list" class="table-wrap"></div>
+    </section>
+    <section id="page-documents" class="page hidden"><div class="section-head"><div><h3>Dokumentumok</h3><p>Kezeld és exportáld üzleti dokumentumaidat.</p></div><button class="btn primary" id="new-doc-btn-2">＋ Új dokumentum</button></div><div id="documents-list" class="table-wrap"></div></section>
+    <section id="page-customers" class="page hidden"><div class="section-head"><div><h3>Ügyfelek</h3><p>Ügyféladatok és kapcsolattartási információk.</p></div><button class="btn primary" id="new-customer-btn">＋ Új ügyfél</button></div><div id="customers-list" class="table-wrap"></div></section>
+    <section id="page-templates" class="page hidden"><div class="section-head"><div><h3>Sablonok</h3><p>Újrafelhasználható dokumentumszövegek és minták.</p></div><button class="btn primary" id="new-template-btn">＋ Új sablon</button></div><div id="templates-list" class="template-grid"></div></section>
+  </main>
+  <div id="modal-root"></div>
+  <div id="toast" class="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>
