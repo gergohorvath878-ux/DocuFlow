@@ -21,11 +21,11 @@ jobs:
             artifact: win
           - os: macos-13
             platform: macos-x64
-            command: npx electron-builder --mac dmg --x64
+            command: npx electron-builder --mac dmg --x64 --publish never
             artifact: mac-x64
           - os: macos-latest
             platform: macos-arm64
-            command: npx electron-builder --mac dmg --arm64
+            command: npx electron-builder --mac dmg --arm64 --publish never
             artifact: mac-arm64
           - os: ubuntu-latest
             platform: linux-x64
