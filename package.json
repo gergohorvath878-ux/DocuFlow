@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "Offline-first business document manager",
   "main": "src/main.js",
-  "author": "DocuFlow",
+  "author": "A Legacy Commerce Kft.",
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
@@ -41,6 +41,7 @@
     ],
     "npmRebuild": true,
     "win": {
+      "publisherName": "A Legacy Commerce Kft.",
       "target": [
         "nsis"
       ],
@@ -80,7 +81,7 @@
         }
       ],
       "category": "Office",
-      "maintainer": "DocuFlow",
+      "maintainer": "A Legacy Commerce Kft.",
       "artifactName": "DocuFlow-${version}-${arch}.${ext}"
     }
   }
