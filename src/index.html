@@ -16,6 +16,7 @@
     <button class="nav" data-page="customers"><span>♙</span> Ügyfelek</button>
     <button class="nav" data-page="templates"><span>▧</span> Sablonok</button>
     <button class="nav" data-page="company"><span>⌂</span> Céges arculat</button>
+    <button class="nav" data-page="company"><span>⌂</span> Céges arculat</button>
     <div class="sidebar-bottom"><div class="offline"><i></i> Helyi, offline mód</div><small>DOCUFLOW DESKTOP · 1.0</small></div>
   </aside>
   <main class="main">
@@ -29,6 +30,17 @@
     <section id="page-documents" class="page hidden"><div class="section-head"><div><h3>Dokumentumok</h3><p>Kezeld és exportáld üzleti dokumentumaidat.</p></div><button class="btn primary" id="new-doc-btn-2">＋ Új dokumentum</button></div><div id="documents-list" class="table-wrap"></div></section>
     <section id="page-customers" class="page hidden"><div class="section-head"><div><h3>Ügyfelek</h3><p>Ügyféladatok és kapcsolattartási információk.</p></div><button class="btn primary" id="new-customer-btn">＋ Új ügyfél</button></div><div id="customers-list" class="table-wrap"></div></section>
     <section id="page-templates" class="page hidden"><div class="section-head"><div><h3>Sablonok</h3><p>Újrafelhasználható dokumentumszövegek és minták.</p></div><button class="btn primary" id="new-template-btn">＋ Új sablon</button></div><div id="templates-list" class="template-grid"></div></section>
+    <section id="page-company" class="page hidden">
+      <div class="section-head"><div><h3>Céges arculat és dokumentumbeállítások</h3><p>Az itt megadott adatok a PDF-dokumentumokban jelenhetnek meg.</p></div></div>
+      <div class="settings-card"><form id="company-form"><div class="form-grid">
+        <div class="field full"><label>Céges logó</label><div class="logo-row"><img id="company-logo-preview" alt="Céges logó előnézete"><button type="button" class="btn" id="choose-logo">Logó kiválasztása</button><button type="button" class="btn ghost" id="remove-logo">Logó eltávolítása</button></div></div>
+        <div class="field"><label>Cégnév</label><input name="name" maxlength="250"></div><div class="field"><label>Kapcsolattartó</label><input name="contact" maxlength="250"></div>
+        <div class="field"><label>E-mail</label><input name="email" type="email" maxlength="250"></div><div class="field"><label>Telefonszám</label><input name="phone" maxlength="80"></div>
+        <div class="field full"><label>Cím</label><input name="address" maxlength="1000"></div><div class="field"><label>Adószám (opcionális)</label><input name="tax_number" maxlength="80"></div>
+        <div class="field"><label>Weboldal</label><input name="website" maxlength="250"></div><div class="field"><label>Arculati szín</label><input name="accent_color" type="color" value="#4169e1"></div><div class="field"><label>Dokumentum lábléc</label><input name="footer_text" maxlength="500"></div>
+      </div><div class="modal-actions"><button class="btn primary">Céges adatok mentése</button></div></form></div>
+      <div class="settings-card"><h3>Sablonmezők</h3><p><code>{{company_name}}</code>, <code>{{customer_name}}</code>, <code>{{customer_address}}</code>, <code>{{document_title}}</code>, <code>{{document_number}}</code>, <code>{{issue_date}}</code>, <code>{{due_date}}</code>, <code>{{items}}</code>, <code>{{total}}</code>.</p></div>
+    </section>
   </main>
   <div id="modal-root"></div>
   <div id="toast" class="toast"></div>
