@@ -15,7 +15,7 @@ if(cmd==='generate'){
  if(!fs.existsSync(privatePath)){console.error('Hiányzik a license-private.pem. Előbb futtasd: npm run license:keys');process.exit(1);}
  const [customerName,email,edition='professional']=process.argv.slice(3);
  if(!customerName){console.error('Használat: npm run license:issue -- "Vásárló neve" email@example.com professional');process.exit(1);}
- if(!['standard','professional'].includes(edition)){console.error('Ismeretlen kiadás.');process.exit(1);}
+ if(edition!=='professional'){console.error('Jelenleg csak Professional licenc állítható ki ezzel az eszközzel.');process.exit(1);}
  const payload={product:'docuflow',licenseId:crypto.randomUUID(),customerName,email:email||'',edition,issuedAt:new Date().toISOString(),perpetual:true,offline:true,deviceLimit:0,versionEntitlement:'1.x'};
  const key=crypto.createPrivateKey(fs.readFileSync(privatePath));const signature=crypto.sign(null,Buffer.from(canonical(payload)),key).toString('base64');
  const output={payload,signature};const out=path.join(root,'DocuFlow-'+edition+'-'+payload.licenseId.slice(0,8)+'.json');
