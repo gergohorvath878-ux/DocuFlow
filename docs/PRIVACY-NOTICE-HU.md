@@ -22,5 +22,13 @@ A felhasználó által bevitt ügyféladatok tekintetében a felhasználó/üzem
 ## 6. Adatmegőrzés és törlés
 A helyi adatok törlését a felhasználó az alkalmazás adatbázisának és biztonsági mentéseinek kezelésével végzi. A program eltávolítása nem feltétlenül törli az alkalmazás felhasználói adatkönyvtárát. A licencvevőnek a saját adatmegőrzési és törlési kötelezettségeit is figyelembe kell vennie.
 
-## 7. Kapcsolat
-A forgalmazó adatvédelmi kapcsolattartási adatait és az érintetti kérelmek benyújtásának módját az értékesítés előtt ki kell tölteni.
+## 7. Adatkezelő és kapcsolat
+
+**Szoftverkiadó / forgalmazó:** Legacy Commerce Korlátolt Felelősségű Társaság (Legacy Commerce Kft.)  
+**Székhely:** 4028 Debrecen, Kassai út 131/A 1. em. D106. ajtó  
+**Cégjegyzékszám:** 09-09-036350  
+**Adószám:** 32585960-2-09  
+**Kapcsolattartási e-mail:** Info@legacycommerce.hu  
+**Adatvédelmi kapcsolattartás:** Info@legacycommerce.hu (a megadott általános kapcsolati cím; külön adatvédelmi e-mail-cím nem került megadásra)
+
+A vásárlási, számlázási, támogatási és licenckiadási folyamatok tekintetében az adatkezelés pontos céljait, jogalapjait, megőrzési időit, címzettjeit/adatfeldolgozóit, az érintetti jogok gyakorlásának módját és az esetleges adattovábbításokat a tényleges működés alapján ki kell egészíteni és jogilag felül kell vizsgálni.
