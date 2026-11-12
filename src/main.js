@@ -43,6 +43,14 @@ function initDatabase() {
   `);
   const cols=db.prepare('PRAGMA table_info(documents)').all().map(c=>c.name);
   if(!cols.includes('content')) db.exec("ALTER TABLE documents ADD COLUMN content TEXT NOT NULL DEFAULT ''");
+  if(db.prepare('SELECT COUNT(*) n FROM templates').get().n===0){
+    const seed=db.prepare('INSERT INTO templates(name,type,body) VALUES(?,?,?)');
+    seed.run('Árajánlat – alap','Árajánlat','Tisztelt {{customer_name}}!\n\nKöszönjük megkeresését. Ajánlatunk részletei: \n\nAjánlati összeg: {{total}}\nAjánlat kelte: {{issue_date}}\nÉrvényesség: {{due_date}}\n\nA minta nem minősül számlának vagy automatikusan kötelező erejű szerződésnek.');
+    seed.run('Megrendelőlap – alap','Megrendelőlap','Megrendelő: {{customer_name}}\nCím: {{customer_address}}\nMegrendelés dátuma: {{issue_date}}\n\nMegrendelt tételek:\n{{items}}\n\nBecsült összeg: {{total}}');
+    seed.run('Szerződéstervezet – alap','Szerződéstervezet','SZERZŐDÉSTERVEZET\n\nFelek: {{company_name}} és {{customer_name}}\n\nA megállapodás tárgya: [részletes leírás]\nTeljesítési határidő: {{due_date}}\nDíjazás: {{total}}\n\nEgyedi feltételek: [kitöltendő]\n\nEz szerkeszthető tervezet, jogi ellenőrzés nélkül nem tekinthető végleges szerződésnek.');
+    seed.run('Teljesítésigazolás – alap','Teljesítésigazolás','TELJESÍTÉSIGAZOLÁS – MINTA\n\nMegrendelő: {{customer_name}}\nSzolgáltató: {{company_name}}\nTeljesítés dátuma: {{issue_date}}\n\nElvégzett munka: [kitöltendő]\nMegjegyzések: [kitöltendő]\n\nMegrendelő aláírása: ____________________\nSzolgáltató aláírása: ____________________');
+    seed.run('Átadás-átvételi jegyzőkönyv – alap','Átadás-átvételi jegyzőkönyv','ÁTADÁS-ÁTVÉTELI JEGYZŐKÖNYV – MINTA\n\nÁtadó: {{company_name}}\nÁtvevő: {{customer_name}}\nDátum: {{issue_date}}\n\nÁtadott eszköz / munka / dokumentum: [kitöltendő]\nÁllapot és megjegyzések: [kitöltendő]\n\nÁtadó aláírása: ____________________\nÁtvevő aláírása: ____________________');
+  }
 }
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -112,7 +120,8 @@ ipcMain.handle('documents:pdf',async(_,id)=>{
  const renderedContent=String(d.content||'').replace(/\{\{([a-z_]+)\}\}/gi,(m,k)=>tokens[k.toLowerCase()]??m);
  const r=await dialog.showSaveDialog(mainWindow,{title:'PDF mentése',defaultPath:d.number+'.pdf',filters:[{name:'PDF dokumentum',extensions:['pdf']}]});if(r.canceled||!r.filePath)return null;
  await new Promise((resolve,reject)=>{const doc=new PDFDocument({size:'A4',margin:48}),stream=fs.createWriteStream(r.filePath);doc.pipe(stream);
- const fontPath=path.join(process.resourcesPath||__dirname,'assets','DejaVuSans.ttf');if(fs.existsSync(fontPath))doc.font(fontPath);else doc.font('Helvetica');
+ const fontCandidates=process.platform==='win32'?['C:/Windows/Fonts/arial.ttf','C:/Windows/Fonts/calibri.ttf']:process.platform==='darwin'?['/System/Library/Fonts/Supplemental/Arial.ttf','/System/Library/Fonts/Supplemental/Helvetica.ttf']:['/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf'];
+ const fontPath=[path.join(process.resourcesPath||__dirname,'assets','DejaVuSans.ttf'),...fontCandidates].find(p=>fs.existsSync(p));if(fontPath)doc.font(fontPath);else doc.font('Helvetica');
  const accent=/^#[0-9a-fA-F]{6}$/.test(company.accent_color)?company.accent_color:'#4169e1';
  if(company.logo_path&&fs.existsSync(company.logo_path)){try{doc.image(company.logo_path,48,38,{fit:[90,55]});}catch{}}
  const bx=company.logo_path&&fs.existsSync(company.logo_path)?155:48;doc.fillColor('#17233c').fontSize(16).text(company.name||'DocuFlow',bx,42,{width:350});
