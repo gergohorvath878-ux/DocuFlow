@@ -1,0 +1,4 @@
+const test=require('node:test');const assert=require('node:assert/strict');const crypto=require('node:crypto');
+function canonical(v){if(Array.isArray(v))return '['+v.map(canonical).join(',')+']';if(v&&typeof v==='object')return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';return JSON.stringify(v);}
+test('canonical JSON is stable regardless of key insertion order',()=>{assert.equal(canonical({b:2,a:1}),canonical({a:1,b:2}));});
+test('Ed25519 signatures verify exact canonical payload',()=>{const k=crypto.generateKeyPairSync('ed25519');const p={product:'docuflow',edition:'professional',perpetual:true,offline:true,deviceLimit:0};const sig=crypto.sign(null,Buffer.from(canonical(p)),k.privateKey);assert.equal(crypto.verify(null,Buffer.from(canonical(p)),k.publicKey,sig),true);p.edition='standard';assert.equal(crypto.verify(null,Buffer.from(canonical(p)),k.publicKey,sig),false);});
