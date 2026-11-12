@@ -10,6 +10,10 @@ Fully offline, unlimited-device licensing has a clear trade-off: the publisher c
 ## Data and privacy
 Customer, document, line-item, template and company-profile data are stored locally in an SQLite database. The company logo is stored in that database and included in database backups. The current client has no built-in cloud sync, analytics or advertising tracker. The database is not encrypted by the application; users should protect the device with OS access controls and full-disk encryption and keep secure backups.
 
+## Publisher
+
+The publisher is **A Legacy Commerce Kft.** The registered office, company registration number, tax number, official contact details, and applicable sales jurisdictions must be added to the final legal and checkout materials before distribution.
+
 ## Legal status
 Generated documents are editable business drafts and templates. They are not automatically legally valid, tax compliant, signed or officially filed. Users are responsible for reviewing content and obtaining professional advice where required.
 
