@@ -3,10 +3,8 @@ name: Build DocuFlow installers
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
 
 permissions:
   contents: write
@@ -43,6 +41,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Run source syntax checks
+        run: npm test
       - name: Build installer
         run: ${{ matrix.command }}
       - name: Upload installer artifacts
