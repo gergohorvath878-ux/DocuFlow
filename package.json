@@ -1,0 +1,49 @@
+{
+  "name": "docuflow-desktop",
+  "version": "1.0.0",
+  "description": "Offline-first business document manager",
+  "main": "src/main.js",
+  "author": "DocuFlow",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg",
+    "dist:linux": "electron-builder --linux AppImage deb",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "pdfkit": "^0.16.0"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "hu.docuflow.desktop",
+    "productName": "DocuFlow",
+    "directories": { "output": "release", "buildResources": "assets" },
+    "files": ["src/**/*", "assets/DejaVuSans.ttf", "package.json"],
+    "asar": true,
+    "asarUnpack": ["node_modules/better-sqlite3/**/*"],
+    "npmRebuild": true,
+    "win": { "target": ["nsis"], "artifactName": "DocuFlow-Setup-${version}.${ext}" },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "category": "public.app-category.business"
+    },
+    "linux": {
+      "target": [{ "target": "AppImage", "arch": ["x64"] }, { "target": "deb", "arch": ["x64"] }],
+      "category": "Office",
+      "artifactName": "DocuFlow-${version}-${arch}.${ext}"
+    }
+  }
+}
