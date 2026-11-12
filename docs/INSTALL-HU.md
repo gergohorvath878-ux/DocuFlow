@@ -2,8 +2,8 @@
 
 ## Végfelhasználóknak
 A kiadási csomagból az operációs rendszerednek megfelelő telepítőt kell futtatni:
-- Windows: DocuFlow-Setup-1.0.0.exe
-- macOS: DocuFlow-1.0.0.dmg
+- Windows: DocuFlow-Setup-1.1.0.exe
+- macOS: DocuFlow-1.1.0.dmg
 - Linux: .AppImage vagy .deb
 
 A telepítő elkészülte után nem kell Node.js-t, npm-et, SQLite-ot vagy Dockert telepíteni. Ezek a futtatáshoz szükséges összetevők az alkalmazáscsomag részei.
@@ -19,3 +19,6 @@ A better-sqlite3 natív Node modul, ezért Electron ABI-hoz újra kell építeni
 
 ## Frissítés
 Az alkalmazás frissítése előtt készíts adatbázis-mentést. Nagyobb adatmodell-változásnál migrációs eljárás szükséges.
+
+## Kereskedelmi licenc
+A Standard kiadás alapértelmezetten használható. Professional licenc importálása a program Licenc menüpontjában történik. A licencfájl offline, digitális aláírással ellenőrzött. Kiadói kulcs beállításához lásd a LICENSE-ISSUANCE-HU.md dokumentumot.
