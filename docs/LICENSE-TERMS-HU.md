@@ -38,4 +38,11 @@ A DocuFlow alapértelmezetten helyben tárolja az adatokat. A licencvevő felel 
 A jelen feltételek nem korlátozzák a vásárlót megillető, jogszabály alapján el nem vonható fogyasztói jogokat. Digitális tartalomra vonatkozó elállási szabályokat, az azonnali teljesítéshez szükséges fogyasztói nyilatkozatokat, visszatérítési és kellékszavatossági szabályokat a tényleges értékesítési folyamatban külön, jogszerűen kell megjeleníteni.
 
 ## 10. Kiadói adatok
-A forgalmazó nevét, székhelyét, cégjegyzékszámát/adószámát, kapcsolattartási címét, az alkalmazandó jogot és joghatóságot az értékesítés megkezdése előtt ki kell tölteni. Ezen adatok hiányában ez a tervezet nem tekinthető közzétételre kész szerződésnek.
+
+**Kiadó / forgalmazó:** Legacy Commerce Korlátolt Felelősségű Társaság (rövid cégnév: Legacy Commerce Kft.)  
+**Székhely:** 4028 Debrecen, Kassai út 131/A 1. em. D106. ajtó  
+**Cégjegyzékszám:** 09-09-036350  
+**Adószám:** 32585960-2-09  
+**Kapcsolattartási e-mail:** Info@legacycommerce.hu
+
+Az alkalmazandó jogot és joghatóságot, valamint az értékesítéshez szükséges további kötelező fogyasztói tájékoztatásokat a véglegesítés előtt jogi szakértővel kell meghatározni. Ez a dokumentum továbbra is kiadási tervezet.
