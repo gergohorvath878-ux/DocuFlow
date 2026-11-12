@@ -20,5 +20,13 @@ A szerződéstervezet, teljesítésigazolás és átadás-átvételi jegyzőkön
 ## Jogi megjegyzés
 Ez a kiadás nem minősített számlázóprogram, nem NAV-integrált rendszer. Számlázási célú használat előtt szakértői ellenőrzés szükséges.
 
-## Build állapot
-A projekt Electron Builder konfigurációt és GitHub Actions workflow-t tartalmaz Windows, macOS és Linux csomagokhoz. A telepítők buildje és platformonkénti tesztelése még hátravan.
+## Build és kiadási állapot
+A GitHub Actions workflow a `main` ágra és a `v*` tagekre is buildet indít. A build artefaktumok elkészülte nem helyettesíti a telepítők valós, célplatformon végzett kézi tesztjét. Kódaláírás és Apple notarizáció nélkül az operációs rendszerek biztonsági figyelmeztetést jeleníthetnek meg.
+
+## Kereskedelmi dokumentumok
+- [Licencfeltételek – magyar tervezet](docs/LICENSE-TERMS-HU.md)
+- [Adatvédelmi tájékoztató – magyar tervezet](docs/PRIVACY-NOTICE-HU.md)
+- [Offline licenc kiadása](docs/LICENSE-ISSUANCE-HU.md)
+- [Commercial overview – English draft](docs/COMMERCIAL-OVERVIEW-EN.md)
+
+A jogi tervezeteket értékesítés előtt ügyvéddel és adótanácsadóval felül kell vizsgáltatni. A kiadói cégadatok és a tényleges vásárlási, visszatérítési, fogyasztói tájékoztatási folyamat még kitöltendő.
