@@ -16,7 +16,7 @@
     <button class="nav" data-page="customers"><span>♙</span> Ügyfelek</button>
     <button class="nav" data-page="templates"><span>▧</span> Sablonok</button>
     <button class="nav" data-page="company"><span>⌂</span> Céges arculat</button>
-    <button class="nav" data-page="company"><span>⌂</span> Céges arculat</button>
+    <button class="nav" data-page="license"><span>◇</span> Licenc</button>
     <div class="sidebar-bottom"><div class="offline"><i></i> Helyi, offline mód</div><small>DOCUFLOW DESKTOP · 1.0</small></div>
   </aside>
   <main class="main">
@@ -40,6 +40,9 @@
         <div class="field"><label>Weboldal</label><input name="website" maxlength="250"></div><div class="field"><label>Arculati szín</label><input name="accent_color" type="color" value="#4169e1"></div><div class="field"><label>Dokumentum lábléc</label><input name="footer_text" maxlength="500"></div>
       </div><div class="modal-actions"><button class="btn primary">Céges adatok mentése</button></div></form></div>
       <div class="settings-card"><h3>Sablonmezők</h3><p><code>{{company_name}}</code>, <code>{{customer_name}}</code>, <code>{{customer_address}}</code>, <code>{{document_title}}</code>, <code>{{document_number}}</code>, <code>{{issue_date}}</code>, <code>{{due_date}}</code>, <code>{{items}}</code>, <code>{{total}}</code>.</p></div>
+    </section>
+    <section id="page-license" class="page hidden"><div class="section-head"><div><h3>DocuFlow licenc</h3><p>Az alkalmazás teljesen offline ellenőrzi a digitális licencfájlt.</p></div></div>
+      <div class="settings-card"><div id="license-status">Licencállapot betöltése…</div><p>A Professional licenc egyszeri vásárlással, lejárat nélkül, a vásárló saját számítógépein használható. Online aktiválás nem szükséges.</p><button type="button" class="btn primary" id="import-license">Licencfájl importálása</button></div>
     </section>
   </main>
   <div id="modal-root"></div>
