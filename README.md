@@ -29,4 +29,13 @@ A GitHub Actions workflow a `main` ágra és a `v*` tagekre is buildet indít. A
 - [Offline licenc kiadása](docs/LICENSE-ISSUANCE-HU.md)
 - [Commercial overview – English draft](docs/COMMERCIAL-OVERVIEW-EN.md)
 
-A jogi tervezeteket értékesítés előtt ügyvéddel és adótanácsadóval felül kell vizsgáltatni. A kiadó: **A Legacy Commerce Kft.** A cég székhelye, cégjegyzékszáma, adószáma, hivatalos kapcsolattartási és adatvédelmi e-mail-címe, valamint a tényleges vásárlási, visszatérítési és fogyasztói tájékoztatási folyamat még kitöltendő.
+## Kiadó adatai
+**Teljes cégnév:** Legacy Commerce Korlátolt Felelősségű Társaság  
+**Rövid cégnév:** Legacy Commerce Kft.  
+**Székhely:** 4028 Debrecen, Kassai út 131/A 1. em. D106. ajtó  
+**Cégjegyzékszám:** 09-09-036350  
+**Adószám:** 32585960-2-09  
+**Kapcsolat:** [Info@legacycommerce.hu](mailto:Info@legacycommerce.hu)  
+**Adatvédelmi kapcsolat:** Info@legacycommerce.hu (a megadott általános kapcsolati cím; külön adatvédelmi cím nincs megadva)
+
+A jogi tervezeteket értékesítés előtt ügyvéddel és adótanácsadóval felül kell vizsgáltatni. A vásárlási, visszatérítési és fogyasztói tájékoztatási folyamatot a tényleges értékesítési modellhez kell igazítani.
