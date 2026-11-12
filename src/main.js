@@ -3,9 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const Database = require('better-sqlite3');
 const PDFDocument = require('pdfkit');
+const crypto = require('crypto');
 
 let db;
 let mainWindow;
+const LICENSE_PUBLIC_KEY = ''; // A kiadó által generált nyilvános Ed25519 kulcs PEM formátumban.
 
 function initDatabase() {
   const dataDir = app.getPath('userData');
@@ -60,8 +62,13 @@ function createWindow() {
   });
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 }
+function canonical(value){if(Array.isArray(value))return '['+value.map(canonical).join(',')+']';if(value&&typeof value==='object')return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';return JSON.stringify(value);}
+function verifyLicenseObject(obj){try{if(!LICENSE_PUBLIC_KEY||!obj||!obj.payload||!obj.signature)return false;const p=obj.payload;if(p.product!=='docuflow'||p.edition!=='professional'||p.perpetual!==true||p.offline!==true||p.deviceLimit!==0)return false;const key=crypto.createPublicKey(LICENSE_PUBLIC_KEY);return crypto.verify(null,Buffer.from(canonical(p)),key,Buffer.from(obj.signature,'base64'));}catch{return false;}}
+function currentLicense(){try{const file=path.join(app.getPath('userData'),'license.json');return verifyLicenseObject(JSON.parse(fs.readFileSync(file,'utf8')));}catch{return false;}}
 function safeText(value, max = 5000) { return String(value ?? '').trim().slice(0, max); }
 
+ipcMain.handle('license:status',()=>({professional:currentLicense(),edition:currentLicense()?'professional':'standard'}));
+ipcMain.handle('license:import',async()=>{const r=await dialog.showOpenDialog(mainWindow,{title:'DocuFlow licenc importálása',properties:['openFile'],filters:[{name:'DocuFlow licenc',extensions:['json']}]});if(r.canceled||!r.filePaths[0])return null;let obj;try{obj=JSON.parse(fs.readFileSync(r.filePaths[0],'utf8'));}catch{throw new Error('A licencfájl formátuma hibás.');}if(!verifyLicenseObject(obj))throw new Error('A licenc aláírása érvénytelen, vagy a kiadói kulcs nincs beállítva.');fs.copyFileSync(r.filePaths[0],path.join(app.getPath('userData'),'license.json'));return true;});
 ipcMain.handle('company:get',()=>db.prepare('SELECT * FROM company_profile WHERE id=1').get()||{name:'',contact:'',email:'',phone:'',address:'',tax_number:'',website:'',accent_color:'#4169e1',footer_text:'',logo_path:''});
 ipcMain.handle('company:save',(_,data)=>{const d=data||{};const v=[safeText(d.name,250),safeText(d.contact,250),safeText(d.email,250),safeText(d.phone,80),safeText(d.address,1000),safeText(d.tax_number,80),safeText(d.website,250),/^#[0-9a-fA-F]{6}$/.test(d.accent_color)?d.accent_color:'#4169e1',safeText(d.footer_text,500)];db.prepare("INSERT INTO company_profile(id,name,contact,email,phone,address,tax_number,website,accent_color,footer_text) VALUES(1,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,contact=excluded.contact,email=excluded.email,phone=excluded.phone,address=excluded.address,tax_number=excluded.tax_number,website=excluded.website,accent_color=excluded.accent_color,footer_text=excluded.footer_text").run(...v);return true;});
 ipcMain.handle('company:choose-logo',async()=>{const r=await dialog.showOpenDialog(mainWindow,{title:'Céges logó kiválasztása',properties:['openFile'],filters:[{name:'Képfájlok',extensions:['png','jpg','jpeg']}]});if(r.canceled||!r.filePaths[0])return null;const dest=path.join(app.getPath('userData'),'company-logo'+path.extname(r.filePaths[0]).toLowerCase());fs.copyFileSync(r.filePaths[0],dest);db.prepare("INSERT INTO company_profile(id,logo_path) VALUES(1,?) ON CONFLICT(id) DO UPDATE SET logo_path=excluded.logo_path").run(dest);return dest;});
@@ -96,7 +103,7 @@ ipcMain.handle('documents:save',(_,data)=>{
  return db.transaction(()=>{
   let id=Number(d.id||0);
   if(id){db.prepare('UPDATE documents SET type=?,title=?,customer_id=?,issue_date=?,due_date=?,currency=?,status=?,notes=?,content=? WHERE id=?').run(type,title,d.customer_id?Number(d.customer_id):null,issueDate,safeText(d.due_date,20),currency,safeText(d.status,30)||'draft',safeText(d.notes,5000),safeText(d.content,20000),id);db.prepare('DELETE FROM items WHERE document_id=?').run(id);}
-  else {const number=`DF-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;id=db.prepare('INSERT INTO documents(number,type,title,customer_id,issue_date,due_date,currency,status,notes,content) VALUES(?,?,?,?,?,?,?,?,?,?)').run(number,type,title,d.customer_id?Number(d.customer_id):null,issueDate,safeText(d.due_date,20),currency,safeText(d.status,30)||'draft',safeText(d.notes,5000)).lastInsertRowid;}
+  else {const number=`DF-${new Date().getFullYear()}-${String(Date.now()).slice(-6)}`;id=db.prepare('INSERT INTO documents(number,type,title,customer_id,issue_date,due_date,currency,status,notes,content) VALUES(?,?,?,?,?,?,?,?,?,?)').run(number,type,title,d.customer_id?Number(d.customer_id):null,issueDate,safeText(d.due_date,20),currency,safeText(d.status,30)||'draft',safeText(d.notes,5000),safeText(d.content,20000)).lastInsertRowid;}
   const insert=db.prepare('INSERT INTO items(document_id,description,quantity,unit,unit_price,vat_rate) VALUES(?,?,?,?,?,?)');
   for(const item of items){const desc=safeText(item.description,500);if(desc)insert.run(id,desc,Math.max(0,Number(item.quantity)||0),safeText(item.unit,20)||'db',Math.max(0,Number(item.unit_price)||0),Math.max(0,Number(item.vat_rate)||0));}
   return id;
@@ -104,13 +111,13 @@ ipcMain.handle('documents:save',(_,data)=>{
 });
 ipcMain.handle('documents:delete',(_,id)=>db.prepare('DELETE FROM documents WHERE id=?').run(Number(id)).changes);
 ipcMain.handle('templates:list',()=>db.prepare('SELECT * FROM templates ORDER BY name').all());
-ipcMain.handle('templates:save',(_,d)=>{
+ipcMain.handle('templates:save',(_,d)=>{ if(!currentLicense())throw new Error('Saját sablon létrehozása és módosítása Professional licencet igényel.');
  const name=safeText(d?.name,200),type=safeText(d?.type,80)||'custom',body=safeText(d?.body,10000);
  if(!name)throw new Error('A sablon neve kötelező.');
  if(d.id){db.prepare('UPDATE templates SET name=?,type=?,body=? WHERE id=?').run(name,type,body,Number(d.id));return Number(d.id);}
  return db.prepare('INSERT INTO templates(name,type,body) VALUES(?,?,?)').run(name,type,body).lastInsertRowid;
 });
-ipcMain.handle('templates:delete',(_,id)=>db.prepare('DELETE FROM templates WHERE id=?').run(Number(id)).changes);
+ipcMain.handle('templates:delete',(_,id)=>{if(!currentLicense())throw new Error('Saját sablon törlése Professional licencet igényel.');return db.prepare('DELETE FROM templates WHERE id=?').run(Number(id)).changes;});
 function money(n,c){try{return new Intl.NumberFormat('hu-HU',{style:'currency',currency:c}).format(n);}catch{return `${Number(n).toFixed(2)} ${c}`;}}
 ipcMain.handle('documents:pdf',async(_,id)=>{
  const d=db.prepare('SELECT d.*,c.name customer_name,c.address customer_address,c.email customer_email,c.tax_number customer_tax FROM documents d LEFT JOIN customers c ON c.id=d.customer_id WHERE d.id=?').get(Number(id));if(!d)throw new Error('A dokumentum nem található.');
