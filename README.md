@@ -2,7 +2,7 @@
 
 Offline-first, többplatformos üzleti dokumentumkezelő desktop alkalmazás Electron + SQLite alapon.
 
-A teljes forráskód és magyar dokumentáció a ChatGPT-ben korábban átadott `DocuFlow-Desktop-1.0.0-Source.zip` csomagban található.
+A teljes forráskód és a magyar dokumentáció a repository `docs/` mappájában található. A részletes [magyar felhasználói kézikönyv](docs/TELJES-FELHASZNALOI-KEZIKONYV-HU.md) bemutatja a telepítést, az ügyfél- és dokumentumkezelést, a PDF-exportot, a sablonokat, a mentést és a visszaállítást.
 
 ## Funkciók
 - Ügyfélkezelés
