@@ -14,6 +14,10 @@ contextBridge.exposeInMainWorld('docuflow', {
     delete: id => ipcRenderer.invoke('documents:delete', id),
     pdf: id => ipcRenderer.invoke('documents:pdf', id)
   },
+  license: {
+    status: () => ipcRenderer.invoke('license:status'),
+    import: () => ipcRenderer.invoke('license:import')
+  },
   company: {
     get: () => ipcRenderer.invoke('company:get'),
     save: data => ipcRenderer.invoke('company:save', data),
