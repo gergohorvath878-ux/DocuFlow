@@ -24,3 +24,18 @@
 - [ ] Frissítés után az adatbázis nem tűnik el.
 
 A fenti teszteket a kiadáskészítőnek kell végrehajtania. A teljes platformos build és manuális QA még nem történt meg.
+
+
+## 1.1.0 dokumentumgenerátor és licenc tesztek
+- [ ] Régi adatbázis megnyitása a `content` és `logo_data` mezők migrációjával.
+- [ ] Céges profil mentése, logó kiválasztása (PNG/JPG, 5 MB limit), eltávolítása.
+- [ ] Adatbázis-mentés és visszaállítás után a logó is megmarad.
+- [ ] Öt beépített sablon első adatbázis-indításkor létrejön.
+- [ ] Sablon kiválasztása a dokumentumszerkesztőben a szöveget betölti.
+- [ ] Helyőrzők behelyettesítése a PDF-be.
+- [ ] Magyar ékezetek megjelenése Windows/macOS/Linux rendszeren.
+- [ ] Standard módban saját sablon mentése/törlése tiltott.
+- [ ] Professional licencfájl aláírása ellenőrződik; módosított licencfájl elutasításra kerül.
+- [ ] Professional licenc importja internet nélkül működik.
+- [ ] Licencfájl több saját számítógépen használható, eszközaktiválás nélkül.
+- [ ] Minden célplatform telepítőjének kézi indítása és alapfunkcióinak ellenőrzése.
